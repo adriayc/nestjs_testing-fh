@@ -28,5 +28,13 @@ RESTFUL API - CONFIGURACIONES Y PRUEBAS SOBRE DTO'S
                 ? What transport layer do you use? REST API
                 ? Would you like to generate CRUD entry points? (Y/n) y
 
+    - Dependencias
+        + Class validator y Class transformer
+            $ npm i class-validator class-transformer
+
     - Postman
         + Realizar las peticiones GET, POST, PATCH y DELETE
+
+    - Errores en VSCode
+        + Unsafe call of a(n) `error` type typed value.
+            > CTRL + SHIFT + P | Developer: Reload Window
