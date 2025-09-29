@@ -20,3 +20,13 @@ RESTFUL API - CONFIGURACIONES Y PRUEBAS SOBRE DTO'S
         $ npm run test:e2e      // Ejecuta los test e2e
 
         $ npm run build         // Ejecuta el buil de prod (Primero ejecuta los testing)
+
+    - Nest CLI
+        + Crear un nuevo resource
+            $ nest g res
+                ? What name would you like to use for this resource (plural, e.g., "users")? pokemons
+                ? What transport layer do you use? REST API
+                ? Would you like to generate CRUD entry points? (Y/n) y
+
+    - Postman
+        + Realizar las peticiones GET, POST, PATCH y DELETE
