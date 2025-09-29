@@ -35,3 +35,7 @@ Testing con NestSJ + Jest. Nos enfocaremos en Pruebas Unitarias y las pruebas de
 
 - [Past JSON as Code](https://marketplace.visualstudio.com/items?itemName=quicktype.quicktype)
 - [DotENV](https://marketplace.visualstudio.com/items?itemName=mikestead.dotenv)
+
+## Introducción a las pruebas automáticas
+
+Comprenden las pruebas unitarias, integración y end to end (E2E) testing y como estructuras las pruebas.
