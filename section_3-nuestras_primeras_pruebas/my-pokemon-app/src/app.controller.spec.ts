@@ -16,6 +16,9 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
+      // const sum = 1 + 1;
+      // console.log({sum})
+
       expect(appController.getHello()).toBe('Hello World!');
     });
   });
