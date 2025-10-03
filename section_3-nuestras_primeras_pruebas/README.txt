@@ -38,3 +38,9 @@ RESTFUL API - CONFIGURACIONES Y PRUEBAS SOBRE DTO'S
     - Errores en VSCode
         + Unsafe call of a(n) `error` type typed value.
             > CTRL + SHIFT + P | Developer: Reload Window
+
+    - Generar informe de cobertura
+        + Reporte de cobertura (Pruebas de Unitarias e Integración)
+            $ npm run test:cov
+        + Abrir el archivo "index.html" del reporte de cobertura en el browser.
+            > coverage/lcov-report/index.html 
