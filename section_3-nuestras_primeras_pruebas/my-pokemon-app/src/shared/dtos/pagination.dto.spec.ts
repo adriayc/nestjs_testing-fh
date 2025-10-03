@@ -1,6 +1,7 @@
 import 'reflect-metadata'; // Debe ir antes de las importaciones
 
 import { validate } from 'class-validator';
+import { plainToInstance } from 'class-transformer';
 import { PaginationDto } from './pagination.dto';
 
 // describe('Pagination.dto.ts', () => {});
@@ -61,5 +62,16 @@ describe('PaginationDto', () => {
         expect(true).toBeFalsy();
       }
     });
+  });
+
+  it('should convert strings to number', async () => {
+    const input = { limit: '10', page: '2' };
+    const dto = plainToInstance(PaginationDto, input);
+
+    const errors = await validate(dto);
+
+    expect(errors.length).toBe(0);
+    expect(dto.limit).toBe(10);
+    expect(dto.page).toBe(2);
   });
 });
