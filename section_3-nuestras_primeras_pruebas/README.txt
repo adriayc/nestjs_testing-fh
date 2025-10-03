@@ -31,6 +31,9 @@ RESTFUL API - CONFIGURACIONES Y PRUEBAS SOBRE DTO'S
     - Dependencias
         + Class validator y Class transformer
             $ npm i class-validator class-transformer
+        
+        + Reflect Metadata (Requerido para ejectuar los test)
+            $ npm i -D reflect-metadata
 
     - Postman
         + Realizar las peticiones GET, POST, PATCH y DELETE
