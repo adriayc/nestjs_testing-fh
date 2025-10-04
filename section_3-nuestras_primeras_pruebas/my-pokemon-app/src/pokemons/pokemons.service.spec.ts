@@ -53,6 +53,25 @@ describe('PokemonsService', () => {
     );
   });
 
+  it('should check properties of the pokemo', async () => {
+    const id = 4;
+
+    const pokemon = await service.findOne(id);
+    // console.log(pokemon);
+
+    expect(pokemon).toHaveProperty('id');
+    expect(pokemon).toHaveProperty('name');
+
+    expect(pokemon).toEqual(
+      expect.objectContaining({
+        id: id,
+        // hp: 39,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        hp: expect.any(Number), // CTRL + . en any y disabled eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      }),
+    );
+  });
+
   it('should find all pokemons and cache them', async () => {
     const pokemons = await service.findAll({ limit: 10, page: 1 });
 
