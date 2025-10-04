@@ -19,7 +19,7 @@ export class PokemonsService {
     const offset = (page - 1) * limit;
 
     // Verificar si existe en cache
-    const cacheKey = `${limit - page}`;
+    const cacheKey = `${limit}-${page}`;
     if (this.paginatedPokemonsCache.has(cacheKey)) {
       return this.paginatedPokemonsCache.get(cacheKey)!;
     }

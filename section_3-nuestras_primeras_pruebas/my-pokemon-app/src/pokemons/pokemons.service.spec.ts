@@ -52,4 +52,15 @@ describe('PokemonsService', () => {
       `Pokemon with id ${id} not found`,
     );
   });
+
+  it('should find all pokemons and cache them', async () => {
+    const pokemons = await service.findAll({ limit: 10, page: 1 });
+
+    expect(pokemons).toBeInstanceOf(Array);
+    expect(pokemons.length).toBe(10);
+
+    expect(service.paginatedPokemonsCache.has('10-1')).toBeTruthy();
+    // expect(service.paginatedPokemonsCache.get('10-1')).toEqual(pokemons);
+    expect(service.paginatedPokemonsCache.get('10-1')).toBe(pokemons); // Funcion por que verifica la posicion en memoria
+  });
 });
