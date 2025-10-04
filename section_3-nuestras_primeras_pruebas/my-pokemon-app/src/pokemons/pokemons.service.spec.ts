@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PokemonsService } from './pokemons.service';
+import { NotFoundException } from '@nestjs/common';
 
 describe('PokemonsService', () => {
   let service: PokemonsService;
@@ -43,5 +44,12 @@ describe('PokemonsService', () => {
     });
   });
 
-  it("should return 404 error if pokemon doesn't exits", () => {});
+  it("should return 404 error if pokemon doesn't exits", async () => {
+    const id = 400_000;
+
+    await expect(service.findOne(id)).rejects.toThrow(NotFoundException);
+    await expect(service.findOne(id)).rejects.toThrow(
+      `Pokemon with id ${id} not found`,
+    );
+  });
 });
