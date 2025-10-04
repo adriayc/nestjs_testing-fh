@@ -1,6 +1,6 @@
 RESTFUL API - CONFIGURACIONES Y PRUEBAS SOBRE DTO'S
 
-* Inicillizar el proyecto
+* Inicilizar el proyecto
     - Crear la app
         $ nest new my-pokemon-app
             ? Which package manager would you ❤️  to use? npm
@@ -50,3 +50,10 @@ RESTFUL API - CONFIGURACIONES Y PRUEBAS SOBRE DTO'S
 
 
 PRUEBAS EN CONTROLADORES, SERVICIOS, MÓDULOS Y MÁS
+
+* Inicializar el proyecto
+    - Levantar y ejecutar los test de la app
+        $ npm install
+        $ npm run start:dev
+        $ npm run test:cov
+        $ npm run test:watch

@@ -57,7 +57,7 @@ export class PokemonsService {
   }
 
   private async getPokemonInformation(id: number): Promise<Pokemon> {
-    console.log('ID:', id);
+    // console.log('ID:', id);
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     const data = (await response.json()) as PokeapiPokemonResponse;
 
