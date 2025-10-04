@@ -11,7 +11,7 @@ export class PokemonsService {
   paginatedPokemonsCache = new Map<string, Pokemon[]>(); // Definir el cache
 
   create(createPokemonDto: CreatePokemonDto) {
-    return 'This action adds a new pokemon';
+    return `This action adds a ${createPokemonDto.name}`;
   }
 
   async findAll(paginationDtO: PaginationDto): Promise<Pokemon[]> {
@@ -44,8 +44,8 @@ export class PokemonsService {
     return pokemons;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pokemon`;
+  async findOne(id: number) {
+    return await this.getPokemonInformation(id);
   }
 
   update(id: number, updatePokemonDto: UpdatePokemonDto) {
