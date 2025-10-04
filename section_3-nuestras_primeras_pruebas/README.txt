@@ -47,3 +47,6 @@ RESTFUL API - CONFIGURACIONES Y PRUEBAS SOBRE DTO'S
             $ npm run test:cov
         + Abrir el archivo "index.html" del reporte de cobertura en el browser.
             > coverage/lcov-report/index.html 
+
+
+PRUEBAS EN CONTROLADORES, SERVICIOS, MÓDULOS Y MÁS
