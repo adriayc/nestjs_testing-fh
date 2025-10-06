@@ -3,6 +3,29 @@ import { PokemonsController } from './pokemons.controller';
 import { PokemonsService } from './pokemons.service';
 import { PaginationDto } from 'src/shared/dtos/pagination.dto';
 
+const mockPokemons: Pokemon[] = [
+  {
+    id: 1,
+    name: 'bulbasaur',
+    type: 'grass',
+    hp: 45,
+    sprites: [
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png',
+    ],
+  },
+  {
+    id: 2,
+    name: 'ivysaur',
+    type: 'grass',
+    hp: 60,
+    sprites: [
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png',
+      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/2.png',
+    ],
+  },
+];
+
 describe('PokemonsController', () => {
   let controller: PokemonsController;
   let service: PokemonsService;
@@ -34,5 +57,21 @@ describe('PokemonsController', () => {
     expect(service.findAll).toHaveBeenCalled();
     // eslint-disable-next-line @typescript-eslint/unbound-method
     expect(service.findAll).toHaveBeenCalledWith(dto);
+  });
+
+  it('should have called the service and check the result', async () => {
+    const dto: PaginationDto = { limit: 10, page: 1 };
+
+    // jest.spyOn() - crea un espía sobre un método existente de un objeto (Esto te permite: ver si fue llamado, cuántas veces fue llamado y con qué argumentos).
+    // .mockImplemetation() - permite reemplazar la implemetación original de una función o nétodo espiado por una version falsa o personalizada (mock), que tú defines.
+    jest
+      .spyOn(service, 'findAll')
+      .mockImplementation(() => Promise.resolve(mockPokemons));
+
+    const pokemons = await controller.findAll(dto);
+    // console.log(pokemons);
+
+    expect(pokemons).toBe(mockPokemons);
+    expect(pokemons.length).toBe(mockPokemons.length);
   });
 });
