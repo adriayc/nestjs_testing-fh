@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { bootstrap } from './main';
+import { AppModule } from './app.module';
 
 // Mock de libreria de terceros
 jest.mock('@nestjs/core', () => ({
@@ -31,5 +32,28 @@ describe('Main.ts Bootstrap', () => {
 
   it('should create application', async () => {
     await bootstrap();
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(NestFactory.create).toHaveBeenCalledWith(AppModule);
+  });
+
+  it('should set global prefix', async () => {
+    await bootstrap();
+
+    expect(mockApp.setGlobalPrefix).toHaveBeenCalledWith('api');
+  });
+
+  it('should listen on port 300 if env not set', async () => {
+    await bootstrap();
+
+    expect(mockApp.listen).toHaveBeenCalledWith(3000);
+  });
+
+  it('should listen on env port', async () => {
+    process.env.PORT = '4000';
+
+    await bootstrap();
+
+    expect(mockApp.listen).toHaveBeenCalledWith(process.env.PORT);
   });
 });
