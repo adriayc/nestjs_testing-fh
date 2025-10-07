@@ -66,3 +66,5 @@ TAREA - COBERTURA AL 100%
         $ npm run start:dev
         $ npm run test:watch
         $ npm run test:cov      // Test de cobertura
+    
+    - Ejecutar e implementar todos los test de cobertura
