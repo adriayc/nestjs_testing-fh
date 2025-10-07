@@ -55,5 +55,5 @@ PRUEBAS EN CONTROLADORES, SERVICIOS, MÓDULOS Y MÁS
     - Levantar y ejecutar los test de la app
         $ npm install
         $ npm run start:dev
-        $ npm run test:cov
+        $ npm run test:cov      // Ejecutar test de cobertura y revisar en el browser
         $ npm run test:watch
