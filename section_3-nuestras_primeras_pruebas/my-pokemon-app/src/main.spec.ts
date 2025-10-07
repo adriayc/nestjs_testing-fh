@@ -56,4 +56,26 @@ describe('Main.ts Bootstrap', () => {
 
     expect(mockApp.listen).toHaveBeenCalledWith(process.env.PORT);
   });
+
+  it('should use global pipes', async () => {
+    await bootstrap();
+
+    expect(mockApp.useGlobalPipes).toHaveBeenCalledWith(
+      expect.objectContaining({
+        errorHttpStatusCode: 400,
+        // Option #1: agregado todos los atributos
+        // validatorOptions: {
+        //   forbidNonWhitelisted: true,
+        //   forbidUnknownValues: false,
+        //   whitelist: true,
+        // },
+        // Option #2: Agregando solo los atributos definidos en la app
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        validatorOptions: expect.objectContaining({
+          whitelist: true,
+          forbidNonWhitelisted: true,
+        }),
+      }),
+    );
+  });
 });
