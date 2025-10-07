@@ -57,3 +57,5 @@ PRUEBAS EN CONTROLADORES, SERVICIOS, MÓDULOS Y MÁS
         $ npm run start:dev
         $ npm run test:cov      // Ejecutar test de cobertura y revisar en el browser
         $ npm run test:watch
+
+TAREA - COBERTURA AL 100%
