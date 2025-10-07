@@ -79,6 +79,16 @@ describe('PokemonsService', () => {
     );
   });
 
+  it('should return a pokemon from cache', async () => {
+    const id = 1;
+    const cacheSpy = jest.spyOn(service.pokemonCache, 'get');
+
+    await service.findOne(id);
+    await service.findOne(id);
+
+    expect(cacheSpy).toHaveBeenCalledTimes(1);
+  });
+
   it('should check properties of the pokemon', async () => {
     const id = 4;
 
@@ -107,5 +117,20 @@ describe('PokemonsService', () => {
     expect(service.paginatedPokemonsCache.has('10-1')).toBeTruthy();
     // expect(service.paginatedPokemonsCache.get('10-1')).toEqual(pokemons);
     expect(service.paginatedPokemonsCache.get('10-1')).toBe(pokemons); // Funcion por que verifica la posicion en memoria
+  });
+
+  it('should return pokemons from cache', async () => {
+    const cacheSpy = jest.spyOn(service.paginatedPokemonsCache, 'get');
+    const fetchSpy = jest.spyOn(global, 'fetch');
+
+    await service.findAll({ limit: 10, page: 1 }); // 1st se guarda en cache
+    // const fetchSpy = jest.spyOn(global, 'fetch');
+    await service.findAll({ limit: 10, page: 1 }); // 2nd se obtiene del cache
+
+    expect(cacheSpy).toHaveBeenCalledTimes(1);
+    expect(cacheSpy).toHaveBeenCalledWith('10-1');
+
+    expect(fetchSpy).toHaveBeenCalledTimes(11);
+    // expect(fetchSpy).toHaveBeenCalledTimes(0);
   });
 });
