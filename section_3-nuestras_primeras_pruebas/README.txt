@@ -77,3 +77,7 @@ END TO END TESTING - E2E
         $ npm install
         $ npm run start:dev     // Run app
         $ npm run test:watch    // Run test
+
+        $ npm run test:e2e      // Run e2e test
+        $ npm run test:e2e:watch
+        $ npm run test:e2e:cov
