@@ -68,3 +68,6 @@ TAREA - COBERTURA AL 100%
         $ npm run test:cov      // Test de cobertura
     
     - Ejecutar e implementar todos los test de cobertura
+
+
+END TO END TESTING - E2E
