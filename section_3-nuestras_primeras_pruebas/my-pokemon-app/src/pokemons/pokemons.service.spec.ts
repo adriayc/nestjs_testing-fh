@@ -133,4 +133,49 @@ describe('PokemonsService', () => {
     expect(fetchSpy).toHaveBeenCalledTimes(11);
     // expect(fetchSpy).toHaveBeenCalledTimes(0);
   });
+
+  it('should update pokemon', async () => {
+    const id = 1;
+    const dto = { name: 'charmander updadted' };
+
+    const updatedPokemon = await service.update(id, dto);
+    // console.log(updatedPokemon);
+
+    expect(updatedPokemon).toEqual({
+      id: 1,
+      name: dto.name,
+      type: 'grass',
+      hp: 45,
+      sprites: [
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png',
+      ],
+    });
+  });
+
+  it('should not update pokemon if not exists', async () => {
+    const id = 1_000_000;
+    const dto = { name: 'charmander updadted' };
+
+    try {
+      await service.update(id, dto);
+      expect(true).toBeFalsy();
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(error.message).toBe(`Pokemon with id ${id} not found`);
+    }
+
+    // await expect(service.update(id, dto)).rejects.toThrow(NotFoundException);
+  });
+
+  it('should remove pokemon from cache', async () => {
+    const id = 1;
+
+    await service.findOne(id); // Revisar que este en cache
+
+    await service.remove(id);
+
+    expect(service.pokemonCache.get(id)).toBeUndefined();
+  });
 });

@@ -81,14 +81,10 @@ export class PokemonsService {
   async update(id: number, updatePokemonDto: UpdatePokemonDto) {
     const pokemon = await this.findOne(id);
 
-    if (!pokemon) {
-      throw new NotFoundException(`Pokemon with id ${id} not found`);
-    }
-
     const updatePokemon = {
       ...pokemon,
       ...updatePokemonDto,
-    };
+    } as Pokemon;
 
     this.pokemonCache.set(id, updatePokemon);
 
