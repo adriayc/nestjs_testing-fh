@@ -71,3 +71,9 @@ TAREA - COBERTURA AL 100%
 
 
 END TO END TESTING - E2E
+
+* Continuar con la app
+    - Reconstruir los modulos y ejecutar test en la app
+        $ npm install
+        $ npm run start:dev     // Run app
+        $ npm run test:watch    // Run test
