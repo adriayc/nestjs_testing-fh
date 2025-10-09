@@ -114,4 +114,61 @@ describe('Pokemons (e2e)', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     expect(response.body.length).toBe(20);
   });
+
+  it('/pokemons/:id (GET - should return a Pokémon by ID', async () => {
+    const id = 1;
+
+    const response = await request(app.getHttpServer()).get(`/pokemons/${id}`);
+    // console.log(response.body);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual({
+      id: 1,
+      name: 'bulbasaur',
+      type: 'grass',
+      hp: 45,
+
+      sprites: [
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png',
+      ],
+    });
+  });
+
+  it('/pokemons/:id (GET - should return Charmander', async () => {
+    const id = 4;
+
+    const response = await request(app.getHttpServer()).get(`/pokemons/${id}`);
+    // console.log(response.body);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toEqual({
+      id: 4,
+      name: 'charmander',
+      type: 'fire',
+      hp: 39,
+      sprites: [
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/4.png',
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/4.png',
+      ],
+    });
+  });
+
+  it('/pokemons/:id (GET - should return Not found', async () => {
+    const id = 1_000_000;
+
+    const response = await request(app.getHttpServer()).get(`/pokemons/${id}`);
+    // console.log(response.body);
+
+    expect(response.statusCode).toBe(404);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    // expect(response.body.error).toBe('Not Found');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    // expect(response.body.message).toBe(`Pokemon with id ${id} not found`);
+    expect(response.body).toEqual({
+      message: `Pokemon with id ${id} not found`,
+      error: 'Not Found',
+      statusCode: 404,
+    });
+  });
 });
