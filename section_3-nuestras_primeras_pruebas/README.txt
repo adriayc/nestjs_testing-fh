@@ -81,3 +81,6 @@ END TO END TESTING - E2E
         $ npm run test:e2e      // Run e2e test
         $ npm run test:e2e:watch
         $ npm run test:e2e:cov
+
+        # No construye la carpeta de distribución (dist), si existe errores en las pruebas unitarias y end to end (E2E)
+        $ npm run build         // Run build
