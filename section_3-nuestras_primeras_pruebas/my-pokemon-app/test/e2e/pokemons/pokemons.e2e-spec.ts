@@ -70,5 +70,16 @@ describe('Pokemons (e2e)', () => {
       name: 'pikachu',
       type: 'electric',
     });
+    // console.log(response);
+
+    expect(response.statusCode).toBe(201);
+    expect(response.body).toEqual({
+      hp: 0,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      id: expect.any(Number),
+      name: 'pikachu',
+      sprites: [],
+      type: 'electric',
+    });
   });
 });
