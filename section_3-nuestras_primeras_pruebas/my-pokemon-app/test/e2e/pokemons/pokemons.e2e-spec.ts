@@ -66,7 +66,7 @@ describe('Pokemons (e2e)', () => {
     expect(messageArray).toEqual(expect.arrayContaining(mostHaveErrorMessage));
   });
 
-  it('/pokemons (POST - with valid body', async () => {
+  it('/pokemons (POST) - with valid body', async () => {
     const response = await request(app.getHttpServer()).post('/pokemons').send({
       name: 'pikachu',
       type: 'electric',
@@ -165,6 +165,58 @@ describe('Pokemons (e2e)', () => {
     // expect(response.body.error).toBe('Not Found');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     // expect(response.body.message).toBe(`Pokemon with id ${id} not found`);
+    expect(response.body).toEqual({
+      message: `Pokemon with id ${id} not found`,
+      error: 'Not Found',
+      statusCode: 404,
+    });
+  });
+
+  it('/pokemons/id (PATCH) - should update pokemon', async () => {
+    const id = 1;
+    const dto = { name: 'bulbasaur update', type: 'grass udpate' };
+
+    const pokemonResponse = await request(app.getHttpServer()).get(
+      `/pokemons/${id}`,
+    );
+
+    const bulbasaur = pokemonResponse.body as Pokemon;
+
+    const response = await request(app.getHttpServer())
+      .patch(`/pokemons/${id}`)
+      .send(dto);
+    // console.log(response);
+
+    const updatePokemon = response.body as Pokemon;
+
+    expect(response.statusCode).toBe(200);
+    // expect(response.body).toEqual({
+    //   id: 1,
+    //   name: 'bulbasaur update',
+    //   type: 'grass',
+    //   hp: 45,
+    //   sprites: [
+    //     'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+    //     'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png',
+    //   ],
+    // });
+
+    expect(updatePokemon.id).toBe(bulbasaur.id);
+    expect(updatePokemon.name).toBe(dto.name);
+    expect(updatePokemon.type).toBe(dto.type);
+    expect(updatePokemon.hp).toBe(bulbasaur.hp);
+    expect(updatePokemon.sprites).toEqual(bulbasaur.sprites);
+  });
+
+  it('/pokemons/id (PATCH) - should throw an 404', async () => {
+    const id = 1_000_000;
+
+    const response = await request(app.getHttpServer())
+      .patch(`/pokemons/${id}`)
+      .send({ name: 'bulbasaur update' });
+    // console.log(response);
+
+    expect(response.statusCode).toBe(404);
     expect(response.body).toEqual({
       message: `Pokemon with id ${id} not found`,
       error: 'Not Found',
