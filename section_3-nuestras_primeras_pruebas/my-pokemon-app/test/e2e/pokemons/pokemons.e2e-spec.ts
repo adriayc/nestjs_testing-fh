@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import request from 'supertest';
 import { App } from 'supertest/types';
 import { AppModule } from '../../../src/app.module';
+import { Pokemon } from '../../../src/pokemons/entities/pokemon.entity';
 
 describe('Pokemons (e2e)', () => {
   let app: INestApplication<App>;
@@ -81,5 +82,36 @@ describe('Pokemons (e2e)', () => {
       sprites: [],
       type: 'electric',
     });
+  });
+
+  it('/pokemons (GET) - should return paginated list of pokemons', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/pokemons')
+      .query({ limit: 5, page: 1 });
+    // console.log(response);
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(response.body.length).toBe(5);
+
+    (response.body as Pokemon[]).forEach((pokemon) => {
+      expect(pokemon).toHaveProperty('id');
+      expect(pokemon).toHaveProperty('name');
+      expect(pokemon).toHaveProperty('type');
+      expect(pokemon).toHaveProperty('hp');
+      expect(pokemon).toHaveProperty('sprites');
+    });
+  });
+
+  it('/pokemons (GET) - should return 20 pokemons', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/pokemons')
+      .query({ limit: 20, page: 1 });
+
+    expect(response.statusCode).toBe(200);
+    expect(response.body).toBeInstanceOf(Array);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    expect(response.body.length).toBe(20);
   });
 });
