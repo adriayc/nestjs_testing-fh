@@ -96,7 +96,7 @@ export class PokemonsService {
 
     this.pokemonCache.delete(id);
 
-    return Promise.resolve(`Pokemon with id ${pokemon?.name} removed`);
+    return Promise.resolve(`Pokemon with name ${pokemon?.name} removed`);
   }
 
   private async getPokemonInformation(id: number): Promise<Pokemon> {
