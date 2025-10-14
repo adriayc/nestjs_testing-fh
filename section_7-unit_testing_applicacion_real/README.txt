@@ -9,6 +9,8 @@ PRUEBAS UNITARIAS EN APLICACIÓN COMPLETA
         + Ejecutar al app
             $ npm run start:dev
         + Abrir en browser (URL: http://localhost:3000/api)
+        + Ejecutar pruebas
+            $ npm run test:watch        // Pruebas unitarias
 
 * Postman
     - Create new collection -> Blank collection | "teslo-shop-api-testing"
