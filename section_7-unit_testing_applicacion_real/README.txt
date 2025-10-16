@@ -11,6 +11,7 @@ PRUEBAS UNITARIAS EN APLICACIÓN COMPLETA
         + Abrir en browser (URL: http://localhost:3000/api)
         + Ejecutar pruebas
             $ npm run test:watch        // Pruebas unitarias
+            $ npm run test:cov          // Pruebas de cobertura (Abri en el browser: /coverage/lcov-report/index.html)
 
 * Postman
     - Create new collection -> Blank collection | "teslo-shop-api-testing"
