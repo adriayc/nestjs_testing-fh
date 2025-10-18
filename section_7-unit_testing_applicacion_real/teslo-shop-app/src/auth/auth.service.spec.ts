@@ -9,7 +9,9 @@ import * as bcrypt from 'bcrypt';
 import {
   BadRequestException,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { authenticate } from 'passport';
 
 describe('Auth Service', () => {
   let authService: AuthService;
@@ -157,5 +159,65 @@ describe('Auth Service', () => {
     });
     expect(result.user.password).not.toBeDefined();
     expect(result.user.password).toBeUndefined();
+  });
+
+  it('should throw an Unauthorized Exception if user does not exist', async () => {
+    const dto: LoginUserDto = {
+      email: 'test@mail.com',
+      password: 'Abc123@',
+    };
+
+    jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+
+    await expect(authService.login(dto)).rejects.toThrow(UnauthorizedException);
+    await expect(authService.login(dto)).rejects.toThrow(
+      'Credentials are not valid (email)',
+    );
+  });
+
+  it('should throw an Unauthorize Exception if password does not exist', async () => {
+    const dto = {
+      email: 'test@mail.com',
+      password: 'Abc123@',
+    } as LoginUserDto;
+
+    const user = {
+      fullName: 'Test User',
+      password: 'Abc1234@',
+      isActive: true,
+      roles: ['user'],
+    } as User;
+
+    jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
+    jest.spyOn(bcrypt, 'compareSync').mockReturnValue(false);
+
+    await expect(authService.login(dto)).rejects.toThrow(UnauthorizedException);
+    await expect(authService.login(dto)).rejects.toThrow(
+      'Credentials are not valid (password)',
+    );
+  });
+
+  it('should check auth status and return user with new token', async () => {
+    const user = {
+      id: '1',
+      email: 'test@mail.com',
+      fullName: 'Test User',
+      isActive: true,
+      roles: ['user', 'admin'],
+    } as User;
+
+    const result = await authService.checkAuthStatus(user);
+    // console.log(result);
+
+    expect(result).toEqual({
+      user: {
+        id: '1',
+        email: 'test@mail.com',
+        fullName: 'Test User',
+        isActive: true,
+        roles: ['user', 'admin'],
+      },
+      token: 'mock-jwt-token',
+    });
   });
 });
