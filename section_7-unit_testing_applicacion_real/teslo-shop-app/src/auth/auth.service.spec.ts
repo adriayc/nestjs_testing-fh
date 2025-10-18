@@ -4,7 +4,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto';
+import { CreateUserDto, LoginUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import {
   BadRequestException,
@@ -104,7 +104,7 @@ describe('Auth Service', () => {
       email: 'test@mail.com',
     } as CreateUserDto;
 
-    jest.spyOn(console, 'log').mockImplementation(() => {}); // Funcion espia del console.log y no retorne nada
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {}); // Funcion espia del console.log y no retorne nada
 
     jest
       .spyOn(userRepository, 'save')
@@ -122,5 +122,40 @@ describe('Auth Service', () => {
       code: '9999',
       detail: 'Unhandled error',
     });
+
+    logSpy.mockRestore();
+  });
+
+  it('should login user and return token', async () => {
+    const dto: LoginUserDto = {
+      email: 'test@mail.com',
+      password: 'Abc123@',
+    };
+
+    const user = {
+      ...dto,
+      fullName: 'Test User',
+      password: 'Abc123@',
+      isActive: true,
+      roles: ['user'],
+    } as User;
+
+    jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
+    jest.spyOn(bcrypt, 'compareSync').mockReturnValue(true);
+
+    const result = await authService.login(dto);
+    // console.log(result);
+
+    expect(result).toEqual({
+      user: {
+        email: 'test@mail.com',
+        fullName: 'Test User',
+        isActive: true,
+        roles: ['user'],
+      },
+      token: 'mock-jwt-token',
+    });
+    expect(result.user.password).not.toBeDefined();
+    expect(result.user.password).toBeUndefined();
   });
 });
