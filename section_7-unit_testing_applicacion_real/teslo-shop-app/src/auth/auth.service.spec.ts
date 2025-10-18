@@ -4,6 +4,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
+import { CreateUserDto } from './dto';
+import * as bcrypt from 'bcrypt';
+import { BadRequestException } from '@nestjs/common';
 
 describe('Auth Service', () => {
   let authService: AuthService;
@@ -40,5 +43,56 @@ describe('Auth Service', () => {
 
   it('should be defined', () => {
     expect(authService).toBeDefined();
+  });
+
+  it('should create a user and return user with token', async () => {
+    const dto: CreateUserDto = {
+      email: 'test@mail.com',
+      password: 'Abc123@',
+      fullName: 'Test User',
+    };
+
+    const user = {
+      email: dto.email,
+      fullName: dto.fullName,
+      id: '1',
+      isActive: true,
+      roles: ['user'],
+    } as User;
+
+    jest.spyOn(userRepository, 'create').mockReturnValue(user);
+    jest.spyOn(bcrypt, 'hashSync').mockReturnValue('Absjkdjsd123jkfds');
+
+    const result = await authService.create(dto);
+    // console.log(result);
+
+    expect(result).toEqual({
+      user: {
+        email: 'test@mail.com',
+        fullName: 'Test User',
+        id: '1',
+        isActive: true,
+        roles: ['user'],
+      },
+      token: 'mock-jwt-token',
+    });
+    expect(bcrypt.hashSync).toHaveBeenCalledWith('Abc123@', 10);
+  });
+
+  it('should throw an error if email already exist', async () => {
+    const dto: CreateUserDto = {
+      email: 'test@mail.com',
+      password: 'Abc123@',
+      fullName: 'Test User',
+    };
+
+    jest
+      .spyOn(userRepository, 'save')
+      .mockRejectedValue({ code: '23505', detail: 'Email already exists' }); // Retornar un error
+
+    await expect(authService.create(dto)).rejects.toThrow(BadRequestException);
+    await expect(authService.create(dto)).rejects.toThrow(
+      'Email already exists',
+    );
   });
 });
