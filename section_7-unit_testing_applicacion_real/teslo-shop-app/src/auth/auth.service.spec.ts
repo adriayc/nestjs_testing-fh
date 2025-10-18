@@ -6,7 +6,10 @@ import { JwtService } from '@nestjs/jwt';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto';
 import * as bcrypt from 'bcrypt';
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 describe('Auth Service', () => {
   let authService: AuthService;
@@ -94,5 +97,30 @@ describe('Auth Service', () => {
     await expect(authService.create(dto)).rejects.toThrow(
       'Email already exists',
     );
+  });
+
+  it('should throw an internal sever error', async () => {
+    const dto = {
+      email: 'test@mail.com',
+    } as CreateUserDto;
+
+    jest.spyOn(console, 'log').mockImplementation(() => {}); // Funcion espia del console.log y no retorne nada
+
+    jest
+      .spyOn(userRepository, 'save')
+      .mockRejectedValue({ code: '9999', detail: 'Unhandled error' });
+
+    await expect(authService.create(dto)).rejects.toThrow(
+      InternalServerErrorException,
+    );
+    await expect(authService.create(dto)).rejects.toThrow(
+      'Please check server logs',
+    );
+
+    expect(console.log).toHaveBeenCalledTimes(2);
+    expect(console.log).toHaveBeenCalledWith({
+      code: '9999',
+      detail: 'Unhandled error',
+    });
   });
 });
