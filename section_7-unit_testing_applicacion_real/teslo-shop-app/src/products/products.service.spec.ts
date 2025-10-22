@@ -5,6 +5,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateProductDto } from './dto/create-product.dto';
+import { BadRequestException } from '@nestjs/common';
 
 describe('Product Service', () => {
   let service: ProductsService;
@@ -111,5 +112,22 @@ describe('Product Service', () => {
       images: ['imag1.png'],
       user: { id: '1', email: 'test@mail.com' },
     });
+  });
+
+  it('should throw a BadRequestException if create product fails', async () => {
+    const dto = {} as CreateProductDto;
+    const user = {} as User;
+
+    jest.spyOn(productRepository, 'save').mockRejectedValue({
+      code: '23505',
+      detail: 'The product has not been created',
+    });
+
+    await expect(service.create(dto, user)).rejects.toThrow(
+      BadRequestException,
+    );
+    await expect(service.create(dto, user)).rejects.toThrow(
+      'The product has not been created',
+    );
   });
 });
