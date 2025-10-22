@@ -5,8 +5,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateProductDto } from './dto/create-product.dto';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
+import { title } from 'process';
 
 describe('Product Service', () => {
   let service: ProductsService;
@@ -170,5 +171,35 @@ describe('Product Service', () => {
         images: product.images.map((img) => img.url),
       })),
     });
+  });
+
+  it('should find a product by valid ID', async () => {
+    const productId = '7acb631e-b51a-4ebd-b1eb-7b893208e59e';
+    const product = {
+      id: productId,
+      title: 'Product #1',
+    } as Product;
+
+    jest.spyOn(productRepository, 'findOneBy').mockResolvedValue(product);
+
+    const result = await service.findOne(productId);
+    // console.log(result);
+
+    expect(result).toEqual({
+      id: '7acb631e-b51a-4ebd-b1eb-7b893208e59e',
+      title: 'Product #1',
+    });
+  });
+
+  it('should throw an error if id was not found', async () => {
+    const productId = '7acb631e-b51a-4ebd-b1eb-7b893208e59e';
+
+    jest.spyOn(productRepository, 'findOneBy').mockReturnValue(null);
+
+    const result = service.findOne(productId);
+    // console.log(await result);
+
+    await expect(result).rejects.toThrow(NotFoundException);
+    await expect(result).rejects.toThrow(`Product with ${productId} not found`);
   });
 });
