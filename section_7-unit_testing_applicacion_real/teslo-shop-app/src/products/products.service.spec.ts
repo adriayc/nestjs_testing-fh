@@ -6,6 +6,7 @@ import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { BadRequestException } from '@nestjs/common';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
 describe('Product Service', () => {
   let service: ProductsService;
@@ -129,5 +130,45 @@ describe('Product Service', () => {
     await expect(service.create(dto, user)).rejects.toThrow(
       'The product has not been created',
     );
+  });
+
+  it('should find all products', async () => {
+    const dto = {
+      limit: 10,
+      offset: 0,
+      gender: 'men',
+    } as PaginationDto;
+
+    const products = [
+      {
+        id: '1',
+        title: 'Product #1',
+        price: 100,
+        images: [{ id: '1', url: 'image1.jpg' }],
+      },
+      {
+        id: '2',
+        title: 'Product #2',
+        price: 200,
+        images: [{ id: '2', url: 'image2.jpg' }],
+      },
+    ] as unknown as Product[];
+
+    const totalProducts = products.length;
+
+    jest.spyOn(productRepository, 'find').mockResolvedValue(products);
+    jest.spyOn(productRepository, 'count').mockResolvedValue(totalProducts);
+
+    const result = await service.findAll(dto);
+    // console.log(result);
+
+    expect(result).toEqual({
+      count: 2,
+      pages: 1,
+      products: products.map((product) => ({
+        ...product,
+        images: product.images.map((img) => img.url),
+      })),
+    });
   });
 });
