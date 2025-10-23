@@ -16,7 +16,31 @@ describe('Product Service', () => {
   let productRepository: Repository<Product>;
   let productImageRepository: Repository<ProductImage>;
 
+  let mockQueryRunner: {
+    connect: jest.Mock;
+    startTransaction: jest.Mock;
+    manager: {
+      delete: jest.Mock;
+      save: jest.Mock;
+    };
+    commitTransaction: jest.Mock;
+    release: jest.Mock;
+    rollbackTransaction: jest.Mock;
+  };
+
   beforeEach(async () => {
+    mockQueryRunner = {
+      connect: jest.fn(),
+      startTransaction: jest.fn(),
+      manager: {
+        delete: jest.fn(),
+        save: jest.fn(),
+      },
+      commitTransaction: jest.fn(),
+      release: jest.fn(),
+      rollbackTransaction: jest.fn(),
+    };
+
     const mockQueryBuilder = {
       //   where: jest.fn().mockReturnThis(), // Opcion #1
       where: jest.fn(() => mockQueryBuilder), // Opcion #2
@@ -47,17 +71,7 @@ describe('Product Service', () => {
     };
 
     const mockDataSource = {
-      createQueryRunner: jest.fn().mockReturnValue({
-        connect: jest.fn(),
-        startTransaction: jest.fn(),
-        manager: {
-          delete: jest.fn(),
-          save: jest.fn(),
-        },
-        commitTransaction: jest.fn(),
-        release: jest.fn(),
-        rollbackTransaction: jest.fn(),
-      }),
+      createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -272,5 +286,35 @@ describe('Product Service', () => {
       slug: 'product-1',
       images: ['image1.jpg'],
     });
+  });
+
+  it('should update product and commitTransaction', async () => {
+    const productId = '1';
+    const dto = {
+      title: 'Updated product',
+      slug: 'update-product',
+      images: [{ id: '1', url: 'image1.jpg' }],
+    } as unknown as UpdateProductDto;
+    const user = {
+      id: '1',
+      fullName: 'Adriano Ayala',
+    } as User;
+
+    const product = {
+      ...dto,
+      price: 100,
+      description: 'some description',
+    } as unknown as Product;
+
+    jest.spyOn(productRepository, 'preload').mockResolvedValue(product);
+
+    await service.update(productId, dto, user);
+
+    expect(mockQueryRunner.connect).toHaveBeenCalled();
+    expect(mockQueryRunner.startTransaction).toHaveBeenCalled();
+    expect(mockQueryRunner.manager.delete).toHaveBeenCalled();
+    expect(mockQueryRunner.manager.save).toHaveBeenCalled();
+    expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
+    expect(mockQueryRunner.release).toHaveBeenCalled();
   });
 });
