@@ -8,6 +8,8 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { title } from 'process';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { use } from 'passport';
 
 describe('Product Service', () => {
   let service: ProductsService;
@@ -23,7 +25,7 @@ describe('Product Service', () => {
         id: 'UUID_VALID',
         title: 'Product #1',
         slug: 'product-1',
-        image: [{ id: '1', url: 'image1.jpg' }],
+        images: [{ id: '1', url: 'image1.jpg' }],
       }),
     };
 
@@ -223,7 +225,52 @@ describe('Product Service', () => {
       id: 'UUID_VALID',
       title: 'Product #1',
       slug: 'product-1',
-      image: [{ id: '1', url: 'image1.jpg' }],
+      images: [{ id: '1', url: 'image1.jpg' }],
+    });
+  });
+
+  it('should throw an error NotFoundException if product not found', async () => {
+    const id = '1';
+    const dto = {} as UpdateProductDto;
+    const user = {} as User;
+
+    jest.spyOn(productRepository, 'preload').mockResolvedValue(null);
+
+    const result = service.update(id, dto, user);
+    // console.log(await result);
+
+    await expect(result).rejects.toThrow(
+      new NotFoundException(`Product with id: ${id} not found`),
+    );
+  });
+
+  it('should update product successfully', async () => {
+    const productId = '1';
+    const dto = {
+      title: 'Updated product',
+      slug: 'update-product',
+    } as UpdateProductDto;
+    const user = {
+      id: '1',
+      fullName: 'Adriano Ayala',
+    } as User;
+
+    const product = {
+      ...dto,
+      price: 100,
+      description: 'some description',
+    } as unknown as Product;
+
+    jest.spyOn(productRepository, 'preload').mockResolvedValue(product);
+
+    const result = await service.update(productId, dto, user);
+    // console.log(result);
+
+    expect(result).toEqual({
+      id: 'UUID_VALID',
+      title: 'Product #1',
+      slug: 'product-1',
+      images: ['image1.jpg'],
     });
   });
 });
