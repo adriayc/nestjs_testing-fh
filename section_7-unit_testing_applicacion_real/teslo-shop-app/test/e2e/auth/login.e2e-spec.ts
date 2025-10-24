@@ -47,4 +47,51 @@ describe('Auth - Login (2e2)', () => {
       expect(response.body.message).toContain(message);
     });
   });
+
+  it('/auth/login (POST) - wrong credential - email', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: 'test1@google.comxx', password: 'Abc123' });
+    // console.log(response.body);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      message: 'Credentials are not valid (email)',
+      error: 'Unauthorized',
+      statusCode: 401,
+    });
+  });
+
+  it('/auth/login (POST) - wrong credential - password', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: 'test1@google.com', password: 'Abc123xx' });
+    // console.log(response.body);
+
+    expect(response.status).toBe(401);
+    expect(response.body).toEqual({
+      message: 'Credentials are not valid (password)',
+      error: 'Unauthorized',
+      statusCode: 401,
+    });
+  });
+
+  it('/auth/login (POST) - valid credentials', async () => {
+    const response = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: 'test1@google.com', password: 'Abc123' });
+    // console.log(response.body);
+
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual({
+      user: {
+        id: expect.any(String),
+        email: 'test1@google.com',
+        fullName: 'Test One',
+        isActive: true,
+        roles: ['admin'],
+      },
+      token: expect.any(String),
+    });
+  });
 });
