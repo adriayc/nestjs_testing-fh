@@ -1,12 +1,28 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Repository } from 'typeorm';
 import * as request from 'supertest';
 import { AppModule } from './../../../src/app.module';
+import { User } from './../../../src/auth/entities/user.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+const testingUser = {
+  email: 'test@test.com',
+  password: 'Abc123@',
+  fullName: 'Test User',
+};
+
+const testingAdmin = {
+  email: 'admin@test.com',
+  password: 'Abc123@',
+  fullName: 'Test Admin',
+};
 
 describe('Auth - Login (2e2)', () => {
   let app: INestApplication;
+  let userRepository: Repository<User>;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
@@ -19,6 +35,31 @@ describe('Auth - Login (2e2)', () => {
     );
 
     await app.init();
+
+    userRepository = app.get<Repository<User>>(getRepositoryToken(User));
+
+    // Eliminar los test users
+    userRepository.delete({ email: testingUser.email });
+    userRepository.delete({ email: testingAdmin.email });
+    // Agregar los test users
+    const responseUser = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send(testingUser);
+    // console.log(responseUser.status);
+    // console.log(responseUser.body);
+    const responseAdmin = await request(app.getHttpServer())
+      .post('/auth/register')
+      .send(testingAdmin);
+    // console.log(responseAdmin.status);
+    await userRepository.update(
+      { email: testingAdmin.email },
+      { roles: ['admin'] },
+    );
+
+    // console.log({
+    //   testingUser: responseUser.status,
+    //   testingAdmin: responseAdmin.status,
+    // });
   });
 
   afterAll(async () => {
@@ -51,7 +92,7 @@ describe('Auth - Login (2e2)', () => {
   it('/auth/login (POST) - wrong credential - email', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ email: 'test1@google.comxx', password: 'Abc123' });
+      .send({ email: 'test@main.comxx', password: testingUser.password });
     // console.log(response.body);
 
     expect(response.status).toBe(401);
@@ -65,7 +106,7 @@ describe('Auth - Login (2e2)', () => {
   it('/auth/login (POST) - wrong credential - password', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ email: 'test1@google.com', password: 'Abc123xx' });
+      .send({ email: testingUser.email, password: 'Abc123xx' });
     // console.log(response.body);
 
     expect(response.status).toBe(401);
@@ -79,15 +120,15 @@ describe('Auth - Login (2e2)', () => {
   it('/auth/login (POST) - valid credentials', async () => {
     const response = await request(app.getHttpServer())
       .post('/auth/login')
-      .send({ email: 'test1@google.com', password: 'Abc123' });
+      .send({ email: testingAdmin.email, password: testingAdmin.password });
     // console.log(response.body);
 
     expect(response.status).toBe(201);
     expect(response.body).toEqual({
       user: {
         id: expect.any(String),
-        email: 'test1@google.com',
-        fullName: 'Test One',
+        email: 'admin@test.com',
+        fullName: 'Test Admin',
         isActive: true,
         roles: ['admin'],
       },
