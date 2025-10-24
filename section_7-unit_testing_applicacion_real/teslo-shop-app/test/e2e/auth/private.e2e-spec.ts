@@ -53,8 +53,14 @@ describe('AuthModule Private (e2e)', () => {
       .post('/auth/register')
       .send(testingAdmin);
 
+    // Acatualizacion
+    await userRepository.update(
+      { email: testingAdmin.email },
+      { roles: ['admin', 'super-user'] },
+    );
+
     token = responseUser.body.token;
-    token = responseAdmin.body.token;
+    adminToken = responseAdmin.body.token;
   });
 
   afterAll(async () => {
@@ -76,7 +82,7 @@ describe('AuthModule Private (e2e)', () => {
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve(true);
-      }, 800);
+      }, 1000);
     });
 
     // Validar que el id es un uuid válido
@@ -94,13 +100,59 @@ describe('AuthModule Private (e2e)', () => {
 
   it('should return custom object if token is valid', async () => {
     // Validar la respuesta
+    const response = await request(app.getHttpServer())
+      .get('/auth/private')
+      .set('Authorization', `Bearer ${token}`);
+    // console.log(response.status);
+    // console.log(response.body);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toMatchObject({
+      ok: true,
+      message: 'Hola Mundo Private',
+      user: {
+        id: expect.any(String),
+        email: 'test@test.com',
+        fullName: 'Testing user',
+        isActive: true,
+        roles: ['user'],
+      },
+      userEmail: 'test@test.com',
+      rawHeaders: expect.any(Array),
+      headers: expect.any(Object),
+    });
   });
 
-  it('should return 401 if admin token is provided', async () => {
-    const response = await request(app.getHttpServer()).get('/auth/private3');
+  it('should return 403 if admin token is provided', async () => {
+    const response = await request(app.getHttpServer())
+      .get('/auth/private3')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(403);
   });
 
   it('should return user if admin token is provided', async () => {
-    const response = await request(app.getHttpServer()).get('/auth/private3');
+    const response = await request(app.getHttpServer())
+      .get('/auth/private3')
+      .set('Authorization', `Bearer ${adminToken}`);
+    // console.log(response.status);
+    // console.log(response.body);
+
+    const userId = response.body.user.id;
+    // console.log(userId);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({
+      ok: true,
+      user: {
+        id: expect.any(String),
+        email: 'admin@test.com',
+        fullName: 'Testing admin',
+        isActive: true,
+        roles: ['admin', 'super-user'],
+      },
+    });
+
+    expect(validate(userId)).toBe(true); // Validar UUID
   });
 });
