@@ -53,3 +53,6 @@ PRUEBAS SOBRE TRANSACCIONES Y CARGA DE ARCHIVOS
     - Realizar peticiones HTTP
         + Seed
             > GET: http://localhost:3000/api/seed   // Crear y descruye los datos de la DB
+
+
+E2E - PRUEBAS DE EXTREMO A EXTREMO
