@@ -15,7 +15,7 @@ describe('UpdatePokemonDto', () => {
     dto.hp = -10;
 
     const errors = await validate(dto);
-    console.log(errors);
+    // console.log(errors);
     const hpError = errors.find((error) => error.property === 'hp');
 
     expect(hpError).toBeDefined();

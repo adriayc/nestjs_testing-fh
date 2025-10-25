@@ -1,6 +1,6 @@
 RESTFUL API - CONFIGURACIONES Y PRUEBAS SOBRE DTO'S
 
-* Inicillizar el proyecto
+* Inicilizar el proyecto
     - Crear la app
         $ nest new my-pokemon-app
             ? Which package manager would you ❤️  to use? npm
@@ -47,3 +47,13 @@ RESTFUL API - CONFIGURACIONES Y PRUEBAS SOBRE DTO'S
             $ npm run test:cov
         + Abrir el archivo "index.html" del reporte de cobertura en el browser.
             > coverage/lcov-report/index.html 
+
+
+PRUEBAS EN CONTROLADORES, SERVICIOS, MÓDULOS Y MÁS
+
+* Inicializar el proyecto
+    - Levantar y ejecutar los test de la app
+        $ npm install
+        $ npm run start:dev
+        $ npm run test:cov      // Ejecutar test de cobertura y revisar en el browser
+        $ npm run test:watch
