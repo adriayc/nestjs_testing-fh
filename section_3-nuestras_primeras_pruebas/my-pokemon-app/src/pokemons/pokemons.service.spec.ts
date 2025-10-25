@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PokemonsService } from './pokemons.service';
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('PokemonsService', () => {
   let service: PokemonsService;
@@ -23,7 +23,33 @@ describe('PokemonsService', () => {
     const result = await service.create(data);
     // console.log(result);
 
-    expect(result).toBe(`This action adds a ${data.name}`);
+    expect(result).toEqual({
+      name: 'pikachu',
+      type: 'electric',
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      id: expect.any(Number),
+      hp: 0,
+      sprites: [],
+    });
+  });
+
+  it('should throw an error if Pokemon exists', async () => {
+    const data = { name: 'pikachu', type: 'electric' };
+
+    await service.create(data);
+
+    try {
+      await service.create(data);
+      expect(true).toBeFalsy();
+    } catch (error) {
+      expect(error).toBeInstanceOf(BadRequestException);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(error.message).toBe(
+        `Pokemon with name ${data.name} already exists`,
+      );
+    }
+
+    // await expect(service.create(data)).rejects.toThrow(BadRequestException);
   });
 
   it('should return pokemon if exists', async () => {
@@ -51,6 +77,16 @@ describe('PokemonsService', () => {
     await expect(service.findOne(id)).rejects.toThrow(
       `Pokemon with id ${id} not found`,
     );
+  });
+
+  it('should return a pokemon from cache', async () => {
+    const id = 1;
+    const cacheSpy = jest.spyOn(service.pokemonCache, 'get');
+
+    await service.findOne(id);
+    await service.findOne(id);
+
+    expect(cacheSpy).toHaveBeenCalledTimes(1);
   });
 
   it('should check properties of the pokemon', async () => {
@@ -81,5 +117,65 @@ describe('PokemonsService', () => {
     expect(service.paginatedPokemonsCache.has('10-1')).toBeTruthy();
     // expect(service.paginatedPokemonsCache.get('10-1')).toEqual(pokemons);
     expect(service.paginatedPokemonsCache.get('10-1')).toBe(pokemons); // Funcion por que verifica la posicion en memoria
+  });
+
+  it('should return pokemons from cache', async () => {
+    const cacheSpy = jest.spyOn(service.paginatedPokemonsCache, 'get');
+    const fetchSpy = jest.spyOn(global, 'fetch');
+
+    await service.findAll({ limit: 10, page: 1 }); // 1st se guarda en cache
+    // const fetchSpy = jest.spyOn(global, 'fetch');
+    await service.findAll({ limit: 10, page: 1 }); // 2nd se obtiene del cache
+
+    expect(cacheSpy).toHaveBeenCalledTimes(1);
+    expect(cacheSpy).toHaveBeenCalledWith('10-1');
+
+    expect(fetchSpy).toHaveBeenCalledTimes(11);
+    // expect(fetchSpy).toHaveBeenCalledTimes(0);
+  });
+
+  it('should update pokemon', async () => {
+    const id = 1;
+    const dto = { name: 'charmander updadted' };
+
+    const updatedPokemon = await service.update(id, dto);
+    // console.log(updatedPokemon);
+
+    expect(updatedPokemon).toEqual({
+      id: 1,
+      name: dto.name,
+      type: 'grass',
+      hp: 45,
+      sprites: [
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png',
+        'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png',
+      ],
+    });
+  });
+
+  it('should not update pokemon if not exists', async () => {
+    const id = 1_000_000;
+    const dto = { name: 'charmander updadted' };
+
+    try {
+      await service.update(id, dto);
+      expect(true).toBeFalsy();
+    } catch (error) {
+      expect(error).toBeInstanceOf(NotFoundException);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expect(error.message).toBe(`Pokemon with id ${id} not found`);
+    }
+
+    // await expect(service.update(id, dto)).rejects.toThrow(NotFoundException);
+  });
+
+  it('should remove pokemon from cache', async () => {
+    const id = 1;
+
+    await service.findOne(id); // Revisar que este en cache
+
+    await service.remove(id);
+
+    expect(service.pokemonCache.get(id)).toBeUndefined();
   });
 });

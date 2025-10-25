@@ -57,3 +57,14 @@ PRUEBAS EN CONTROLADORES, SERVICIOS, MÓDULOS Y MÁS
         $ npm run start:dev
         $ npm run test:cov      // Ejecutar test de cobertura y revisar en el browser
         $ npm run test:watch
+
+TAREA - COBERTURA AL 100%
+
+* Inicializar el proyecto
+    - Levanta y ejecutar los test de la app
+        $ npm install
+        $ npm run start:dev
+        $ npm run test:watch
+        $ npm run test:cov      // Test de cobertura
+    
+    - Ejecutar e implementar todos los test de cobertura
