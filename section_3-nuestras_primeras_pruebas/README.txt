@@ -68,3 +68,19 @@ TAREA - COBERTURA AL 100%
         $ npm run test:cov      // Test de cobertura
     
     - Ejecutar e implementar todos los test de cobertura
+
+
+END TO END TESTING - E2E
+
+* Continuar con la app
+    - Reconstruir los modulos y ejecutar test en la app
+        $ npm install
+        $ npm run start:dev     // Run app
+        $ npm run test:watch    // Run test
+
+        $ npm run test:e2e      // Run e2e test
+        $ npm run test:e2e:watch
+        $ npm run test:e2e:cov
+
+        # No construye la carpeta de distribución (dist), si existe errores en las pruebas unitarias y end to end (E2E)
+        $ npm run build         // Run build
