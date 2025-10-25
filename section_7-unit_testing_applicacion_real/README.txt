@@ -35,3 +35,21 @@ CONTROLADORES - MÓDULOS - BOOTSTRAP - SERVICIOS
     - Realizar peticiones HTTP
         + Seed
             > GET: http://localhost:3000/api/seed   // Crear y descruye los datos de la DB
+
+
+PRUEBAS SOBRE TRANSACCIONES Y CARGA DE ARCHIVOS
+
+* Inicializar la app
+    - Crear las dependencias
+        $ npm install
+    - Levantar al db
+        $ docker compose up -d
+    - Ejecutar la app
+        $ npm run start:dev
+    - Ejecutar pruebas
+        $ npm run test:watch
+
+* Postman
+    - Realizar peticiones HTTP
+        + Seed
+            > GET: http://localhost:3000/api/seed   // Crear y descruye los datos de la DB
