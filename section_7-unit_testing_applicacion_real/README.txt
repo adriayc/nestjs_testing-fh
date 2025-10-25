@@ -64,6 +64,10 @@ E2E - PRUEBAS DE EXTREMO A EXTREMO
         $ docker compose up -d
     - Ejecutar la app
         $ npm run start:dev
+    - Ejecutar pruebas
+        $ npm run test:e2e:watch    // Pruebas e2e
+        $ npm run test:e2e:cov      // Pruebas e2e de covertura
+
 
 * Postman
     - Realizar peticiones HTTP
