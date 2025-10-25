@@ -53,3 +53,23 @@ PRUEBAS SOBRE TRANSACCIONES Y CARGA DE ARCHIVOS
     - Realizar peticiones HTTP
         + Seed
             > GET: http://localhost:3000/api/seed   // Crear y descruye los datos de la DB
+
+
+E2E - PRUEBAS DE EXTREMO A EXTREMO
+
+* Inicializar la app
+    - Crear las dependencias
+        $ npm install
+    - Levantar al db
+        $ docker compose up -d
+    - Ejecutar la app
+        $ npm run start:dev
+    - Ejecutar pruebas
+        $ npm run test:e2e:watch    // Pruebas e2e
+        $ npm run test:e2e:cov      // Pruebas e2e de covertura
+
+
+* Postman
+    - Realizar peticiones HTTP
+        + Seed
+            > GET: http://localhost:3000/api/seed   // Crear y descruye los datos de la DB

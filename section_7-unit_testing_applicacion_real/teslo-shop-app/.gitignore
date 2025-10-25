@@ -42,3 +42,4 @@ lerna-debug.log*
 
 ## A2xcDev
 package-lock.json
+/coverage-e2e
