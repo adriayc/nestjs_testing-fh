@@ -19,3 +19,19 @@ PRUEBAS UNITARIAS EN APLICACIÓN COMPLETA
             > GET: http://localhost:3000/api/seed   // Crear y descruye los datos de la DB
         + Productos (Add folder: "Products")
             > GET: http://localhost:3000/api/products   // Obtener todos los productos
+
+
+CONTROLADORES - MÓDULOS - BOOTSTRAP - SERVICIOS
+
+* Inicializar la app
+    - Levantar la db
+        $ docker compose up -d
+    - Ejecutar la app
+        $ npm run start:dev
+    - Ejecutar pruebas
+        $ npm run test:watch
+
+* Postman
+    - Realizar peticiones HTTP
+        + Seed
+            > GET: http://localhost:3000/api/seed   // Crear y descruye los datos de la DB
